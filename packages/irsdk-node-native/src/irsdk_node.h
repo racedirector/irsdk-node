@@ -47,6 +47,12 @@ private:
    */
   Napi::Value IsRunning(const Napi::CallbackInfo &info);
 
+  // Not yet implemented
+  Napi::Value WaitForData(const Napi::CallbackInfo &info);
+  Napi::Value GetSessionData(const Napi::CallbackInfo &info);
+  Napi::Value GetTelemetryData(const Napi::CallbackInfo &info);
+  Napi::Value GetTelemetryVar(const Napi::CallbackInfo &info);
+
 protected:
   /**
    * Logging enabled

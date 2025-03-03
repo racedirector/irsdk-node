@@ -11,7 +11,7 @@
 Napi::Object irsdkNode::Init(Napi::Env env, Napi::Object exports)
 {
   printf("Hello from irsdkNode::Init\n");
-  Napi::Function func = DefineClass(env, "irsdkNode", {InstanceAccessor<&irsdkNode::GetEnableLogging, &irsdkNode::SetEnableLogging>("enableLogging"), InstanceMethod("startSDK", &irsdkNode::StartSdk), InstanceMethod("stopSDK", &irsdkNode::StopSdk), InstanceMethod("broadcast", &irsdkNode::BroadcastMessage), InstanceMethod("isRunning", &irsdkNode::IsRunning)});
+  Napi::Function func = DefineClass(env, "irsdkNode", {InstanceAccessor<&irsdkNode::GetEnableLogging, &irsdkNode::SetEnableLogging>("enableLogging"), InstanceMethod("startSDK", &irsdkNode::StartSdk), InstanceMethod("stopSDK", &irsdkNode::StopSdk), InstanceMethod("waitForData", &irsdkNode::WaitForData), InstanceMethod("getSessionData", &irsdkNode::GetSessionData), InstanceMethod("getTelemetryData", &irsdkNode::GetTelemetryData), InstanceMethod("getTelemetryVariable", &irsdkNode::GetTelemetryVar), InstanceMethod("broadcast", &irsdkNode::BroadcastMessage), InstanceMethod("isRunning", &irsdkNode::IsRunning)});
 
   Napi::FunctionReference *constructor = new Napi::FunctionReference();
   *constructor = Napi::Persistent(func);
@@ -95,6 +95,26 @@ Napi::Value irsdkNode::StartSdk(const Napi::CallbackInfo &info)
 Napi::Value irsdkNode::StopSdk(const Napi::CallbackInfo &info)
 {
   return Napi::Boolean::New(info.Env(), false);
+}
+
+Napi::Value irsdkNode::WaitForData(const Napi::CallbackInfo &info)
+{
+  return Napi::Boolean::New(info.Env(), false);
+}
+
+Napi::Value irsdkNode::GetSessionData(const Napi::CallbackInfo &info)
+{
+  return Napi::String::New(info.Env(), "");
+}
+
+Napi::Value irsdkNode::GetTelemetryData(const Napi::CallbackInfo &info)
+{
+  return Napi::String::New(info.Env(), "");
+}
+
+Napi::Value irsdkNode::GetTelemetryVar(const Napi::CallbackInfo &info)
+{
+  return Napi::Object::New(info.Env());
 }
 
 /**
