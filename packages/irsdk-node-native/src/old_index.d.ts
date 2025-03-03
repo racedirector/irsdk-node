@@ -10,8 +10,8 @@ import {
   ReplayStateCommand,
   TelemetryCommand,
   VideoCaptureCommand,
-  // TelemetryVariable,
-  // TelemetryVarList,
+  TelemetryVariable,
+  TelemetryVarList,
 } from '@irsdk-node/types';
 
 type TelemetryTypesDict = {
@@ -29,6 +29,12 @@ export interface INativeSDK {
 
   // State
   isRunning(): boolean;
+  waitForData(timeout?: number): boolean;
+  getSessionData(): string; // full yaml
+  getTelemetryData(): TelemetryVarList;
+
+  getTelemetryVariable<T>(index: number): TelemetryVariable<T>;
+  getTelemetryVariable<T>(name: string): TelemetryVariable<T>;
 
   // Broadcast command overloads
   // This is handled in the cpp side so no need to mess with it in js
@@ -64,6 +70,19 @@ export class NativeSDK implements INativeSDK {
   // State
   public isRunning(): boolean;
 
+  public waitForData(timeout?: number): boolean;
+
+  public getSessionData(): string; // full yaml
+
+  public getTelemetryData(): TelemetryVarList;
+
+  public getTelemetryVariable<T extends number | boolean | string>(index: number): TelemetryVariable<T[]>;
+
+  public getTelemetryVariable<T extends number | boolean | string>(name: string): TelemetryVariable<T[]>;
+
+  // Private helpers
+  public __getTelemetryTypes(): TelemetryTypesDict;
+
   // Broadcast command overloads
   // This is handled in the cpp side so no need to mess with it in js
   public broadcast(message: BroadcastMessages.CameraSwitchPos, pos: number, group: number, camera: number): void;
@@ -94,3 +113,5 @@ export class NativeSDK implements INativeSDK {
 
   public broadcast(message: BroadcastMessages.VideoCapture, command: VideoCaptureCommand): void;
 }
+
+// export const DebugSDK: typeof NativeSDK;
