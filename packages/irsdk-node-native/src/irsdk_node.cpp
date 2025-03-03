@@ -122,7 +122,70 @@ Napi::Value irsdkNode::GetTelemetryVar(const Napi::CallbackInfo &info)
  */
 Napi::Value irsdkNode::BroadcastMessage(const Napi::CallbackInfo &info)
 {
-  return Napi::Boolean::New(info.Env(), false);
+  auto env = info.Env();
+
+  // Determine message type
+  if (info.Length() <= 2 || !info[0].IsNumber())
+  {
+    return Napi::Boolean::New(env, false);
+  }
+
+  if (info.Length() == 4 && !info[2].IsNumber())
+  {
+    return Napi::Boolean::New(env, false);
+  }
+
+  int msgEnumIndex = info[0].As<Napi::Number>();
+  irsdk_BroadcastMsg msgType = static_cast<irsdk_BroadcastMsg>(msgEnumIndex);
+
+  // Args
+  int arg1 = info[1].As<Napi::Number>();
+  auto arg2 = info[2].As<Napi::Number>();
+  auto arg3 = info[3].As<Napi::Number>();
+
+  // these defs are in irsdk_defines.cpp
+  switch (msgType)
+  {
+  // irsdk_BroadcastMsg msg, int arg1, int arg2, int var3
+  case irsdk_BroadcastCamSwitchPos: // @todo we need to use irsdk_padCarNum for arg1
+  case irsdk_BroadcastCamSwitchNum:
+    printf("BroadcastMessage(msgType: %d, arg1: %d, arg2: %d, arg3: %d)\n", msgType, arg1, arg2.Int32Value(), arg3.Int32Value());
+    irsdk_broadcastMsg(msgType, arg1, arg2, arg3);
+    break;
+
+  // irsdk_BroadcastMsg msg, int arg1, int unused, int unused
+  case irsdk_BroadcastReplaySearch:   // arg1 == irsdk_RpySrchMode
+  case irsdk_BroadcastReplaySetState: // arg1 == irsdk_RpyStateMode
+  case irsdk_BroadcastCamSetState:    // arg1 == irsdk_CameraState
+  case irsdk_BroadcastTelemCommand:   // arg1 == irsdk_TelemCommandMode
+  case irsdk_BroadcastVideoCapture:   // arg1 == irsdk_VideoCaptureMode
+    printf("BroadcastMessage(msgType: %d, arg1: %d, arg2: -1, arg3: -1)\n", msgType, arg1);
+    irsdk_broadcastMsg(msgType, arg1, -1, -1);
+    break;
+
+  // irsdk_BroadcastMsg msg, int arg1, int arg2, int unused
+  case irsdk_BroadcastReloadTextures: // arg1 == irsdk_ReloadTexturesMode
+  case irsdk_BroadcastChatComand:     // arg1 == irsdk_ChatCommandMode
+  case irsdk_BroadcastReplaySetPlaySpeed:
+    printf("BroadcastMessage(msgType: %d, arg1: %d, arg2: %d, arg3: -1)\n", msgType, arg1, arg2.Int32Value());
+    irsdk_broadcastMsg(msgType, arg1, arg2, -1);
+    break;
+
+  // irsdk_BroadcastMsg msg, int arg1, float arg2
+  case irsdk_BroadcastPitCommand: // arg1 == irsdk_PitCommandMode
+  case irsdk_BroadcastFFBCommand: // arg1 == irsdk_FFBCommandMode
+  case irsdk_BroadcastReplaySearchSessionTime:
+  case irskd_BroadcastReplaySetPlayPosition:
+    printf("BroadcastMessage(msgType: %d, arg1: %d, arg2: %f)\n", msgType, arg1, (float)arg2.FloatValue());
+    irsdk_broadcastMsg(msgType, arg1, (float)arg2.FloatValue());
+    break;
+
+  default:
+    printf("Attempted to broadcast an unsupported message.");
+    return Napi::Boolean::New(env, false);
+  }
+
+  return Napi::Boolean::New(env, true);
 }
 
 /**
