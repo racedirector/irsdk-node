@@ -134,3 +134,11 @@ Napi::Value irsdkNode::IsRunning(const Napi::CallbackInfo &info)
   // TODO: Check if we have data
   return Napi::Boolean::New(info.Env(), sdkConnected);
 }
+
+Napi::Object InitAll(Napi::Env env, Napi::Object exports)
+{
+  irsdkNode::Init(env, exports);
+  return exports;
+}
+
+NODE_API_MODULE(NODE_GYP_MODULE_NAME, InitAll);
