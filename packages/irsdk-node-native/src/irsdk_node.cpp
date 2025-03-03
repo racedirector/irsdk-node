@@ -1,4 +1,5 @@
 #include "./irsdk_node.h"
+#include "../lib/yaml_parser.h"
 
 // ---------------------------
 // Constrcutors
@@ -24,7 +25,7 @@ Napi::Object irsdkNode::Init(Napi::Env env, Napi::Object exports)
  * Instance constructor
  */
 irsdkNode::irsdkNode(const Napi::CallbackInfo &info)
-    : Napi::ObjectWrap<irsdkNode>(info), m_data(NULL), m_nData(0), m_statusID(0), m_lastSessionCt(-1), _loggingEnabled(false)
+    : Napi::ObjectWrap<irsdkNode>(info), m_data(NULL), m_nData(0), m_statusID(0), m_lastSessionCt(-1), m_lastTick(-1), _loggingEnabled(false)
 {
   // If logging enabled, log that we're initializing the class
   if (_loggingEnabled)
@@ -46,10 +47,10 @@ Napi::Value irsdkNode::GetEnableLogging(const Napi::CallbackInfo &info)
 /**
  * Sets the logging enabled property. Always logs a message of the next state.
  */
-void irsdkNode::SetEnableLogging(const Napi::CallbackInfo &info)
+void irsdkNode::SetEnableLogging(const Napi::CallbackInfo &info, const Napi::Value &value)
 {
   Napi::Boolean enable;
-  if (info.Length <= 0 || !info[0].IsBoolean())
+  if (info.Length() <= 0 || !info[0].IsBoolean())
   {
     enable = Napi::Boolean::New(info.Env(), false);
   }
@@ -58,7 +59,6 @@ void irsdkNode::SetEnableLogging(const Napi::CallbackInfo &info)
     enable = info[0].As<Napi::Boolean>();
   }
 
-  printf("Setting logging enabled: %i\n", info[0]);
   this->_loggingEnabled = enable;
 }
 
@@ -92,12 +92,18 @@ Napi::Value irsdkNode::StartSdk(const Napi::CallbackInfo &info)
 /**
  * Stops the SDK
  */
-Napi::Value irsdkNode::StopSdk(const Napi::CallbackInfo &info) {}
+Napi::Value irsdkNode::StopSdk(const Napi::CallbackInfo &info)
+{
+  return Napi::Boolean::New(info.Env(), false);
+}
 
 /**
  * Broadcasts a message
  */
-Napi::Value irsdkNode::BroadcastMessage(const Napi::CallbackInfo &info) {}
+Napi::Value irsdkNode::BroadcastMessage(const Napi::CallbackInfo &info)
+{
+  return Napi::Boolean::New(info.Env(), false);
+}
 
 /**
  * Returns whether the SDK is running

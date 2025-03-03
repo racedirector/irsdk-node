@@ -2,6 +2,7 @@
 #define IRSDK_NODE_H
 
 #include <napi.h>
+#include "../lib/irsdk_defines.h"
 #include "../lib/irsdk_client.h"
 
 class irsdkNode : public Napi::ObjectWrap<irsdkNode>
@@ -21,7 +22,7 @@ private:
   /**
    * Set logging enabled
    */
-  void SetEnableLogging(const Napi::CallbackInfo &info);
+  void SetEnableLogging(const Napi::CallbackInfo &info, const Napi::Value &value);
 
   // Methods
   // Control
@@ -76,6 +77,6 @@ protected:
    * Last session data tick
    */
   int m_lastTick;
-}
+};
 
 #endif
