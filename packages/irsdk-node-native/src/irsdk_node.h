@@ -77,3 +77,5 @@ protected:
    */
   int m_lastTick;
 }
+
+#endif

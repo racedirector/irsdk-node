@@ -3,7 +3,7 @@
     {
       "target_name": "irsdk_node",
       "sources": [
-        "src/irsdk_node.cc",
+        "src/irsdk_node.cpp",
         "lib/irsdk_utils.cpp",
         "lib/yaml_parser.cpp",
         "lib/irsdk_defines.h"
